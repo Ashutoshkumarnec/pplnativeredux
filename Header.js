@@ -13,8 +13,6 @@ class Footer extends Component {
     if (emails === null) {
       Actions.pop({ key: Actions.login() });
       Actions.refresh({ key: Actions.login() });
-
-      alert("Logged out Successfully");
     } else {
       console.warn("Error");
     }

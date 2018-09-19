@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { Dropdown } from "react-native-material-dropdown";
 import ImagePicker from "react-native-image-picker";
 import ShowPost from "./ShowPost";
+import { connect } from "react-redux";
+import Store from "./Store";
 import UploadPost from "./UploadPost";
 import {
   Container,
@@ -25,7 +27,9 @@ import {
   Dimensions,
   PixelRatio,
   AsyncStorage,
-  ScrollView
+  ScrollView,
+  ActivityIndicator,
+  ProgressBarAndroid
 } from "react-native";
 import Header from "./Header";
 import ModalDropdown from "react-native-modal-dropdown";
@@ -50,7 +54,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#F5FCFF"
+    backgroundColor: "#98AFC7"
   },
   welcome: {
     fontSize: 20,
@@ -89,7 +93,7 @@ const styles = StyleSheet.create({
   }
 });
 
-export default class Basic extends Component {
+class Basic extends Component {
   static onEnter = () => {
     console.warn("hiii");
   };
@@ -98,31 +102,42 @@ export default class Basic extends Component {
 
     this.toggle = this.toggle.bind(this);
 
-    this.state = {
-      isOpen: false,
-      selectedItem: "TimeLine",
-      image: null,
-      title: "",
-      category: "",
-      description: "",
-      titlemsg: "",
-      categorymsg: "",
-      descriptionmsg: "",
-      imagemsg: "",
-      email: "",
-      PostUploadMsg: "",
-      categoryUploadmsg: "",
-      Post: [],
-      Category: [],
-      Username: "",
-      SinglePost: false,
-      Comment: "",
-      Commentmsg: "",
-      CategoryFilter: ""
-    };
+    // this.state = {
+    //   isOpen: false,
+    //   selectedItem: "TimeLine",
+    //   image: null,
+    //   title: "",
+    //   category: "",
+    //   description: "",
+    //   titlemsg: "",
+    //   categorymsg: "",
+    //   descriptionmsg: "",
+    //   imagemsg: "",
+    //   email: "",
+    //   PostUploadMsg: "",
+    //   categoryUploadmsg: "",
+    //   Post: [],
+    //   Category: [],
+    //   Username: "",
+    //   SinglePost: false,
+    //   Comment: "",
+    //   Commentmsg: "",
+    //   CategoryFilter: "",
+    //   Error: false
+    // };
   }
   SinglePost = fieldName => text => {
-    this.setState({ SinglePost: true, selectedItem: "" });
+    // this.setState({ SinglePost: true, selectedItem: "" });
+    Store.dispatch({
+      type: "TimeLine_username",
+      fieldName: "SinglePost",
+      value: true
+    });
+    Store.dispatch({
+      type: "TimeLine_username",
+      fieldName: "selectedItem",
+      value: ""
+    });
     fetch("http://192.168.100.194:7187/AllSendData", {
       headers: {
         Accept: "application/json",
@@ -137,42 +152,116 @@ export default class Basic extends Component {
       .then(resp => {
         if (resp.data === "No Comment") {
         } else {
-          this.setState({ Post: resp.data });
+          // this.setState({ Post: resp.data });
+          Store.dispatch({
+            type: "TimeLine_username",
+            fieldName: "Post",
+            value: resp.data
+          });
         }
       });
   };
   UploadPost = async () => {
-    if (this.state.title === "") {
-      this.setState({ titlemsg: "Fill in Title" });
-    } else if (this.state.category === "") {
-      this.setState({ categorymsg: "Fill in Category ", titlemsg: "" });
-    } else if (this.state.description === "") {
-      this.setState({
-        descriptionmsg: "Fill in Description ",
-        titlemsg: "",
-        categorymsg: ""
+    if (this.props.Data.title === "") {
+      // this.setState({ titlemsg: "Fill in Title" });
+      Store.dispatch({
+        type: "TimeLine_username",
+        fieldName: "titlemsg",
+        value: "Fill in Title"
       });
-    } else if (this.state.image === null) {
-      this.setState({
-        imagemsg: "Please , Select Image",
-        descriptionmsg: "",
-        titlemsg: "",
-        categorymsg: ""
+    } else if (this.props.Data.category === "") {
+      // this.setState({ categorymsg: "Fill in Category ", titlemsg: "" });
+      Store.dispatch({
+        type: "TimeLine_username",
+        fieldName: "categorymsg",
+        value: "Fill in Category"
+      });
+      Store.dispatch({
+        type: "TimeLine_username",
+        fieldName: "titlemsg",
+        value: ""
+      });
+    } else if (this.props.Data.description === "") {
+      // this.setState({
+      //   descriptionmsg: "Fill in Description ",
+      //   titlemsg: "",
+      //   categorymsg: ""
+      // });
+      Store.dispatch({
+        type: "TimeLine_username",
+        fieldName: "descriptionmsg",
+        value: "Fill in Description"
+      });
+      Store.dispatch({
+        type: "TimeLine_username",
+        fieldName: "titlemsg",
+        value: ""
+      });
+      Store.dispatch({
+        type: "TimeLine_username",
+        fieldName: "categorymsg",
+        value: ""
+      });
+    } else if (this.props.Data.image === null) {
+      // this.setState({
+      //   imagemsg: "Please , Select Image",
+      //   descriptionmsg: "",
+      //   titlemsg: "",
+      //   categorymsg: ""
+      // });
+      Store.dispatch({
+        type: "TimeLine_username",
+        fieldName: "imagemsg",
+        value: "Please , Select Image"
+      });
+      Store.dispatch({
+        type: "TimeLine_username",
+        fieldName: "descriptionmsg",
+        value: ""
+      });
+      Store.dispatch({
+        type: "TimeLine_username",
+        fieldName: "titlemsg",
+        value: ""
+      });
+      Store.dispatch({
+        type: "TimeLine_username",
+        fieldName: "categorymsg",
+        value: ""
       });
     } else {
       let emails = await AsyncStorage.getItem("email");
-      this.setState({
-        imagemsg: "",
-        descriptionmsg: "",
-        titlemsg: "",
-        categorymsg: ""
+      // this.setState({
+      //   imagemsg: "",
+      //   descriptionmsg: "",
+      //   titlemsg: "",
+      //   categorymsg: ""
+      // });
+      Store.dispatch({
+        type: "TimeLine_username",
+        fieldName: "imagemsg",
+        value: ""
       });
-
+      Store.dispatch({
+        type: "TimeLine_username",
+        fieldName: "descriptionmsg",
+        value: ""
+      });
+      Store.dispatch({
+        type: "TimeLine_username",
+        fieldName: "titlemsg",
+        value: ""
+      });
+      Store.dispatch({
+        type: "TimeLine_username",
+        fieldName: "categorymsg",
+        value: ""
+      });
       let data = new FormData();
-      data.append("image", this.state.image.uri);
-      data.append("title", this.state.title);
-      data.append("category", this.state.category);
-      data.append("description", this.state.description);
+      data.append("image", this.props.Data.image.uri);
+      data.append("title", this.props.Data.title);
+      data.append("category", this.props.Data.category);
+      data.append("description", this.props.Data.description);
       data.append("email", emails);
       fetch("http://192.168.100.194:7187/UploadPost", {
         headers: {
@@ -186,8 +275,13 @@ export default class Basic extends Component {
           return response.json();
         })
         .then(resp => {
-          this.setState({
-            PostUploadMsg: resp.data
+          // this.setState({
+          //   PostUploadMsg: resp.data
+          // });
+          Store.dispatch({
+            type: "TimeLine_username",
+            fieldName: "PostUploadMsg",
+            value: resp.data
           });
           fetch("http://192.168.100.194:7187/AllSendData", {
             headers: {
@@ -204,22 +298,62 @@ export default class Basic extends Component {
               return response.json();
             })
             .then(resp => {
-              this.setState({ Post: resp.data });
+              // this.setState({ Post: resp.data, Error: false });
+              Store.dispatch({
+                type: "TimeLine_username",
+                fieldName: "Post",
+                value: resp.data
+              });
+              Store.dispatch({
+                type: "TimeLine_username",
+                fieldName: "Error",
+                value: false
+              });
             });
           let tim = setTimeout(() => {
-            this.setState({
-              image: null,
-              PostUploadMsg: "",
-              selectedItem: "TimeLine"
+            // this.setState({
+            //   image: null,
+            //   PostUploadMsg: "",
+            //   selectedItem: "TimeLine"
+            // });
+            Store.dispatch({
+              type: "TimeLine_username",
+              fieldName: "image",
+              value: null
+            });
+            Store.dispatch({
+              type: "TimeLine_username",
+              fieldName: "PostUploadMsg",
+              value: ""
+            });
+            Store.dispatch({
+              type: "TimeLine_username",
+              fieldName: "selectedItem",
+              value: "TimeLine"
             });
           }, 2000);
         });
     }
   };
   componentDidMount = async () => {
-    this.setState({
-      Username: await AsyncStorage.getItem("Username"),
-      email: await AsyncStorage.getItem("email")
+    // this.setState({
+    //   Username: await AsyncStorage.getItem("Username"),
+    //   email: await AsyncStorage.getItem("email")
+    // });
+    Store.dispatch({
+      type: "TimeLine_username",
+      fieldName: "Username",
+      value: await AsyncStorage.getItem("Username")
+    });
+    Store.dispatch({
+      type: "TimeLine_username",
+      fieldName: "SinglePost",
+      value: false
+    });
+    Store.dispatch({
+      type: "TimeLine_username",
+      fieldName: "email",
+      value: await AsyncStorage.getItem("email")
     });
     fetch("http://192.168.100.194:7187/AllSendData", {
       headers: {
@@ -235,7 +369,23 @@ export default class Basic extends Component {
         return response.json();
       })
       .then(resp => {
-        this.setState({ Post: resp.data });
+        if (resp.data.length != 0) {
+          // this.setState({ Post: resp.data });
+          Store.dispatch({
+            type: "TimeLine_username",
+            fieldName: "Post",
+            value: resp.data
+          });
+        } else {
+          setTimeout(() => {
+            // this.setState({ Error: true });
+            Store.dispatch({
+              type: "TimeLine_username",
+              fieldName: "Error",
+              value: true
+            });
+          }, 7000);
+        }
       });
     //Uploading Category Data
     fetch("http://192.168.100.194:7187/AllSendData", {
@@ -253,14 +403,29 @@ export default class Basic extends Component {
         return response.json();
       })
       .then(resp => {
-        this.setState({ Category: resp.data });
+        // this.setState({ Category: resp.data });
+        Store.dispatch({
+          type: "TimeLine_username",
+          fieldName: "Category",
+          value: resp.data
+        });
       });
   };
   AddLike = fieldName => async text => {
-    if (this.state.selectedItem === "TimeLine") {
-      this.setState({ SinglePost: false });
-    } else if (this.state.SinglePost === true) {
-      this.setState({ selectedItem: "" });
+    if (this.props.Data.selectedItem === "TimeLine") {
+      // this.setState({ SinglePost: false });
+      Store.dispatch({
+        type: "TimeLine_username",
+        fieldName: "SinglePost",
+        value: false
+      });
+    } else if (this.props.Data.SinglePost === true) {
+      // this.setState({ selectedItem: "" });
+      Store.dispatch({
+        type: "TimeLine_username",
+        fieldName: "selectedItem",
+        value: ""
+      });
     }
     fetch("http://192.168.100.194:7187/AllSendData", {
       headers: {
@@ -272,23 +437,38 @@ export default class Basic extends Component {
         email: await AsyncStorage.getItem("email"),
         ID: fieldName,
         data: "AddLike",
-        Selected: this.state.selectedItem,
-        SinglePost: this.state.SinglePost,
-        category: this.state.CategoryFilter
+        Selected: this.props.Data.selectedItem,
+        SinglePost: this.props.Data.SinglePost,
+        category: this.props.Data.CategoryFilter
       })
     })
       .then(response => {
         return response.json();
       })
       .then(resp => {
-        this.setState({ Post: resp.data });
+        // this.setState({ Post: resp.data });
+        Store.dispatch({
+          type: "TimeLine_username",
+          fieldName: "Post",
+          value: resp.data
+        });
       });
   };
   UploadComment = fieldName => async text => {
-    if (this.state.Comment === "") {
-      this.setState({ Commentmsg: "Please, Fill in Comment" });
+    if (this.props.Data.Comment === "") {
+      // this.setState({ Commentmsg: "Please, Fill in Comment" });
+      Store.dispatch({
+        type: "TimeLine_username",
+        fieldName: "Commentmsg",
+        value: "Please, Fill in Comment"
+      });
     } else {
-      this.setState({ Commentmsg: "" });
+      // this.setState({ Commentmsg: "" });
+      Store.dispatch({
+        type: "TimeLine_username",
+        fieldName: "Commentmsg",
+        value: ""
+      });
       fetch("http://192.168.100.194:7187/AllSendData", {
         headers: {
           Accept: "application/json",
@@ -299,32 +479,77 @@ export default class Basic extends Component {
           data: "SubmitComment",
           Id: fieldName,
           CommentedBy: await AsyncStorage.getItem("email"),
-          Comment: this.state.Comment
+          Comment: this.props.Data.Comment
         })
       })
         .then(response => {
           return response.json();
         })
         .then(resp => {
-          this.setState({ Post: resp.data, Comment: "" });
+          // this.setState({ Post: resp.data, Comment: "" });
+          Store.dispatch({
+            type: "TimeLine_username",
+            fieldName: "Post",
+            value: resp.data
+          });
+          Store.dispatch({
+            type: "TimeLine_username",
+            fieldName: "Comment",
+            value: ""
+          });
         });
     }
   };
   UploadCategory = async () => {
-    if (this.state.image === null) {
-      this.setState({ imagemsg: "Please , Select Image" });
-    } else if (this.state.category === "") {
-      this.setState({
-        categorymsg: "Please , fill Category ",
-        imagemsg: "",
-        titlemsg: ""
+    if (this.props.Data.image === null) {
+      // this.setState({ imagemsg: "Please , Select Image" });
+      Store.dispatch({
+        type: "TimeLine_username",
+        fieldName: "imagemsg",
+        value: "Please , Select Image"
+      });
+    } else if (this.props.Data.category === "") {
+      // this.setState({
+      //   categorymsg: "Please , fill Category ",
+      //   imagemsg: "",
+      //   titlemsg: ""
+      // });
+      Store.dispatch({
+        type: "TimeLine_username",
+        fieldName: "categorymsg",
+        value: "Please , fill Category"
+      });
+      Store.dispatch({
+        type: "TimeLine_username",
+        fieldName: "imagemsg",
+        value: ""
+      });
+      Store.dispatch({
+        type: "TimeLine_username",
+        fieldName: "titlemsg",
+        value: ""
       });
     } else {
-      this.setState({ categorymsg: "", imagemsg: "", titlemsg: "" });
+      // this.setState({ categorymsg: "", imagemsg: "", titlemsg: "" });
+      Store.dispatch({
+        type: "TimeLine_username",
+        fieldName: "categorymsg",
+        value: ""
+      });
+      Store.dispatch({
+        type: "TimeLine_username",
+        fieldName: "imagemsg",
+        value: ""
+      });
+      Store.dispatch({
+        type: "TimeLine_username",
+        fieldName: "titlemsg",
+        value: ""
+      });
       let emails = await AsyncStorage.getItem("email");
       let data = new FormData();
-      data.append("image", this.state.image.uri);
-      data.append("category", this.state.category);
+      data.append("image", this.props.Data.image.uri);
+      data.append("category", this.props.Data.category);
       data.append("email", emails);
       fetch("http://192.168.100.194:7187/UploadCategory", {
         headers: {
@@ -338,7 +563,12 @@ export default class Basic extends Component {
           return response.json();
         })
         .then(resp => {
-          this.setState({ categoryUploadmsg: resp.data });
+          // this.setState({ categoryUploadmsg: resp.data });
+          Store.dispatch({
+            type: "TimeLine_username",
+            fieldName: "categoryUploadmsg",
+            value: resp.data
+          });
           fetch("http://192.168.100.194:7187/AllSendData", {
             headers: {
               Accept: "application/json",
@@ -354,36 +584,101 @@ export default class Basic extends Component {
               return response.json();
             })
             .then(resp => {
-              this.setState({ Category: resp.data });
+              // this.setState({ Category: resp.data });
+              Store.dispatch({
+                type: "TimeLine_username",
+                fieldName: "Category",
+                value: resp.data
+              });
             });
           let tim = setTimeout(() => {
-            this.setState({
-              selectedItem: "TimeLine"
+            // this.setState({
+            //   selectedItem: "TimeLine"
+            // });
+            Store.dispatch({
+              type: "TimeLine_username",
+              fieldName: "selectedItem",
+              value: "TimeLine"
             });
           }, 2000);
         });
     }
   };
   toggle() {
-    this.setState({
-      isOpen: !this.state.isOpen,
-      image: null,
-      imagemsg: "",
-      category: "",
-      categorymsg: "",
-      categoryUploadmsg: "",
-      PostUploadMsg: ""
+    // this.setState({
+    //   isOpen: !this.state.isOpen,
+    //   image: null,
+    //   imagemsg: "",
+    //   category: "",
+    //   categorymsg: "",
+    //   categoryUploadmsg: "",
+    //   PostUploadMsg: ""
+    // });
+    Store.dispatch({
+      type: "TimeLine_username",
+      fieldName: "isOpen",
+      value: !this.props.Data.isOpen
+    });
+    Store.dispatch({
+      type: "TimeLine_username",
+      fieldName: "image",
+      value: null
+    });
+    Store.dispatch({
+      type: "TimeLine_username",
+      fieldName: "imagemsg",
+      value: ""
+    });
+    Store.dispatch({
+      type: "TimeLine_username",
+      fieldName: "category",
+      value: ""
+    });
+    Store.dispatch({
+      type: "TimeLine_username",
+      fieldName: "categorymsg",
+      value: ""
+    });
+    Store.dispatch({
+      type: "TimeLine_username",
+      fieldName: "categoryUploadmsg",
+      value: ""
+    });
+    Store.dispatch({
+      type: "TimeLine_username",
+      fieldName: "PostUploadMsg",
+      value: ""
     });
   }
   setText = fieldName => text => {
     if (text != "") {
-      this.setState({ [fieldName]: text, [fieldName + "msg"]: "" });
+      // this.setState({ [fieldName]: text, [fieldName + "msg"]: "" });
+      Store.dispatch({
+        type: "TimeLine_username",
+        fieldName: fieldName,
+        value: text
+      });
+      Store.dispatch({
+        type: "TimeLine_username",
+        fieldName: fieldName + "msg",
+        value: ""
+      });
     } else {
-      this.setState({ [fieldName + "msg"]: "Please fill " + fieldName });
+      // this.setState({ [fieldName + "msg"]: "Please fill " + fieldName });
+      Store.dispatch({
+        type: "TimeLine_username",
+        fieldName: fieldName + "msg",
+        value: "Please fill " + fieldName
+      });
     }
   };
   updateMenuState(isOpen) {
-    this.setState({ isOpen });
+    // this.setState({ isOpen });
+    Store.dispatch({
+      type: "TimeLine_username",
+      fieldName: "isOpen",
+      value: isOpen
+    });
   }
   selectPhotoTapped = () => {
     const options = {
@@ -406,11 +701,20 @@ export default class Basic extends Component {
         console.log("User tapped custom button: ", response.customButton);
       } else {
         let source = { uri: response.uri };
-        this.setState({
-          image: source,
-          imagemsg: ""
+        // this.setState({
+        //   image: source,
+        //   imagemsg: ""
+        // });
+        Store.dispatch({
+          type: "TimeLine_username",
+          fieldName: "image",
+          value: source
         });
-        console.warn(this.state.image);
+        Store.dispatch({
+          type: "TimeLine_username",
+          fieldName: "imagemsg",
+          value: ""
+        });
       }
     });
   };
@@ -423,16 +727,21 @@ export default class Basic extends Component {
       method: "POST",
       body: JSON.stringify({
         data: "SendLatestFirst",
-        SelectedItem: this.state.selectedItem,
+        SelectedItem: this.props.Data.selectedItem,
         email: await AsyncStorage.getItem("email"),
-        Category: this.state.CategoryFilter
+        Category: this.props.Data.CategoryFilter
       })
     })
       .then(response => {
         return response.json();
       })
       .then(resp => {
-        this.setState({ Post: resp.data });
+        // this.setState({ Post: resp.data });
+        Store.dispatch({
+          type: "TimeLine_username",
+          fieldName: "Post",
+          value: resp.data
+        });
       });
   };
   SendOldest = async () => {
@@ -444,16 +753,21 @@ export default class Basic extends Component {
       method: "POST",
       body: JSON.stringify({
         data: "SendOldestFirst",
-        SelectedItem: this.state.selectedItem,
+        SelectedItem: this.props.Data.selectedItem,
         email: await AsyncStorage.getItem("email"),
-        Category: this.state.CategoryFilter
+        Category: this.props.Data.CategoryFilter
       })
     })
       .then(response => {
         return response.json();
       })
       .then(resp => {
-        this.setState({ Post: resp.data });
+        // this.setState({ Post: resp.data });
+        Store.dispatch({
+          type: "TimeLine_username",
+          fieldName: "Post",
+          value: resp.data
+        });
       });
   };
   SentMostCommented = async () => {
@@ -465,9 +779,9 @@ export default class Basic extends Component {
       method: "POST",
       body: JSON.stringify({
         data: "MostCommented",
-        SelectedItem: this.state.selectedItem,
+        SelectedItem: this.props.Data.selectedItem,
         email: await AsyncStorage.getItem("email"),
-        Category: this.state.CategoryFilter
+        Category: this.props.Data.CategoryFilter
       })
     })
       .then(response => {
@@ -476,15 +790,40 @@ export default class Basic extends Component {
       .then(resp => {
         let ccou = resp.data;
         console.log("Most Commented", resp.data);
-        this.setState({ Post: resp.data });
+        // this.setState({ Post: resp.data });
+        Store.dispatch({
+          type: "TimeLine_username",
+          fieldName: "Post",
+          value: resp.data
+        });
       });
   };
   onMenuItemSelected1 = async item => {
-    this.setState({
-      selectedItem: "",
-      isOpen: false,
-      SinglePost: false,
-      CategoryFilter: item
+    // this.setState({
+    //   selectedItem: "",
+    //   isOpen: false,
+    //   SinglePost: false,
+    //   CategoryFilter: item
+    // });
+    Store.dispatch({
+      type: "TimeLine_username",
+      fieldName: "selectedItem",
+      value: ""
+    });
+    Store.dispatch({
+      type: "TimeLine_username",
+      fieldName: "isOpen",
+      value: false
+    });
+    Store.dispatch({
+      type: "TimeLine_username",
+      fieldName: "SinglePost",
+      value: false
+    });
+    Store.dispatch({
+      type: "TimeLine_username",
+      fieldName: "CategoryFilter",
+      value: item
     });
     fetch("http://192.168.100.194:7187/AllSendData", {
       headers: {
@@ -503,19 +842,53 @@ export default class Basic extends Component {
       })
       .then(resp => {
         if (resp.data === "No Record Found") {
-          this.setState({ Post: "" });
+          // this.setState({ Post: "" });
+          Store.dispatch({
+            type: "TimeLine_username",
+            fieldName: "Post",
+            value: ""
+          });
         } else {
-          this.setState({ Post: resp.data });
+          // this.setState({ Post: resp.data });
+          Store.dispatch({
+            type: "TimeLine_username",
+            fieldName: "Post",
+            value: resp.data
+          });
         }
       });
   };
-  onMenuItemSelected = async item => {
-    this.setState({
-      isOpen: false,
-      selectedItem: item,
-      SinglePost: false
+
+  show = () => {
+    // this.setState({ ShowDetails: true });
+    Store.dispatch({
+      type: "TimeLine_username",
+      fieldName: "ShowDetails",
+      value: true
     });
-    if (this.state.selectedItem === "TimeLine") {
+  };
+  onMenuItemSelected = async item => {
+    // this.setState({
+    //   isOpen: false,
+    //   selectedItem: item,
+    //   SinglePost: false
+    // });
+    Store.dispatch({
+      type: "TimeLine_username",
+      fieldName: "isOpen",
+      value: false
+    });
+    Store.dispatch({
+      type: "TimeLine_username",
+      fieldName: "selectedItem",
+      value: item
+    });
+    Store.dispatch({
+      type: "TimeLine_username",
+      fieldName: "SinglePost",
+      value: false
+    });
+    if (this.props.Data.selectedItem === "TimeLine") {
       fetch("http://192.168.100.194:7187/AllSendData", {
         headers: {
           Accept: "application/json",
@@ -530,10 +903,20 @@ export default class Basic extends Component {
           return response.json();
         })
         .then(resp => {
-          this.setState({ Post: resp.data });
+          // this.setState({ Post: resp.data });
+          Store.dispatch({
+            type: "TimeLine_username",
+            fieldName: "Post",
+            value: resp.data
+          });
         });
     } else {
-      this.setState({ Post: [] });
+      // this.setState({ Post: [] });
+      Store.dispatch({
+        type: "TimeLine_username",
+        fieldName: "Post",
+        value: []
+      });
       fetch("http://192.168.100.194:7187/AllSendData", {
         headers: {
           Accept: "application/json",
@@ -549,13 +932,29 @@ export default class Basic extends Component {
           return response.json();
         })
         .then(resp => {
-          this.setState({ Post: resp.data });
+          if (resp.data.length != 0) {
+            // this.setState({ Post: resp.data });
+            Store.dispatch({
+              type: "TimeLine_username",
+              fieldName: "Post",
+              value: resp.data
+            });
+          } else {
+            setTimeout(() => {
+              // this.setState({ Error: true });
+              Store.dispatch({
+                type: "TimeLine_username",
+                fieldName: "Error",
+                value: true
+              });
+            }, 7000);
+          }
         });
     }
   };
   render() {
     let Final = [];
-    this.state.Category.map(data => Final.push({ value: data.category }));
+    this.props.Data.Category.map(data => Final.push({ value: data.category }));
     let { width } = Dimensions.get("window");
     width = width * 0.9;
     return (
@@ -563,18 +962,18 @@ export default class Basic extends Component {
         menu={
           <Menu
             onItemSelected={this.onMenuItemSelected}
-            username={this.state.Username}
-            Category={this.state.Category}
+            username={this.props.Data.Username}
+            Category={this.props.Data.Category}
             onItemSelected1={this.onMenuItemSelected1}
           />
         }
-        isOpen={this.state.isOpen}
+        isOpen={this.props.Data.isOpen}
         onChange={isOpen => this.updateMenuState(isOpen)}
       >
         <Header />
-        {this.state.selectedItem != "UploadPost" &&
-        this.state.selectedItem != "UploadCategory" &&
-        this.state.SinglePost != true ? (
+        {this.props.Data.selectedItem != "UploadPost" &&
+        this.props.Data.selectedItem != "UploadCategory" &&
+        this.props.Data.SinglePost != true ? (
           <View
             style={{
               borderColor: "orange",
@@ -593,14 +992,12 @@ export default class Basic extends Component {
         ) : (
           <View />
         )}
-        {this.state.selectedItem === "TimeLine" ? (
+        {this.props.Data.selectedItem === "TimeLine" ? (
           <View style={styles.container}>
-            <Container style={{ width: 350, marginLeft: 60 }}>
-              <Content
-                style={{ marginLeft: 10, marginRight: 20, marginTop: 5 }}
-              >
-                {this.state.Post.length != 0 ? (
-                  this.state.Post.map((data, index) => (
+            <Container style={{ width: 360, marginLeft: 60 }}>
+              <Content>
+                {this.props.Data.Post.length != 0 ? (
+                  this.props.Data.Post.map((data, index) => (
                     <ShowPost
                       key={index}
                       ID={data._id}
@@ -613,36 +1010,46 @@ export default class Basic extends Component {
                       AddLike={this.AddLike}
                       Likes={data.Like.length}
                       comments={data.Comments.length}
+                      Show={this.show}
+                      description={data.description}
                     />
                   ))
-                ) : (
-                  <Text style={{ color: "green", fontSize: 30 }}>
-                    Please Wait ..... loading
+                ) : this.props.Data.Error === true ? (
+                  <Text style={{ color: "red", fontSize: 20 }}>
+                    Connection TimeOut ! Check Connection with Backend Server or
+                    may Post Not available
                   </Text>
+                ) : (
+                  <ActivityIndicator size="large" color="green" />
                 )}
               </Content>
             </Container>
           </View>
-        ) : this.state.selectedItem === "UploadPost" ? (
+        ) : this.props.Data.selectedItem === "UploadPost" ? (
           <View style={styles.container}>
-            <Container style={{ width: 350, marginLeft: 60 }}>
-              <Content style={{ marginLeft: 20, marginRight: 20 }}>
+            <Container style={{ width: 300, marginLeft: 20, marginTop: 30 }}>
+              <Content
+                style={{
+                  marginLeft: 30,
+                  marginTop: 50
+                }}
+              >
                 <UploadPost
                   SetText={this.setText}
-                  TitleMsg={this.state.titlemsg}
+                  TitleMsg={this.props.Data.titlemsg}
                   Data={Final}
-                  CategoryMsg={this.state.categorymsg}
+                  CategoryMsg={this.props.Data.categorymsg}
                   SelectPhotoTapped={this.selectPhotoTapped}
-                  Image={this.state.image}
-                  ImageMsg={this.state.imagemsg}
-                  PostUploadMsg={this.state.PostUploadMsg}
+                  Image={this.props.Data.image}
+                  ImageMsg={this.props.Data.imagemsg}
+                  PostUploadMsg={this.props.Data.PostUploadMsg}
                   uploadPost={this.UploadPost}
-                  DescriptionMsg={this.state.descriptionmsg}
+                  DescriptionMsg={this.props.Data.descriptionmsg}
                 />
               </Content>
             </Container>
           </View>
-        ) : this.state.selectedItem === "UploadCategory" ? (
+        ) : this.props.Data.selectedItem === "UploadCategory" ? (
           <View style={styles.container}>
             <Container style={{ width: 300, marginLeft: 20, marginTop: 30 }}>
               <Content
@@ -665,14 +1072,17 @@ export default class Basic extends Component {
                       { marginBottom: 20, marginTop: 20 }
                     ]}
                   >
-                    {this.state.image === null ? (
+                    {this.props.Data.image === null ? (
                       <Text>Select a Photo</Text>
                     ) : (
-                      <Image style={styles.avatar} source={this.state.image} />
+                      <Image
+                        style={styles.avatar}
+                        source={this.props.Data.image}
+                      />
                     )}
                   </View>
                 </TouchableOpacity>
-                <Text style={{ color: "red" }}>{this.state.imagemsg}</Text>
+                <Text style={{ color: "red" }}>{this.props.Data.imagemsg}</Text>
                 <Form>
                   <Item
                     floatingLabel
@@ -682,11 +1092,11 @@ export default class Basic extends Component {
                     <Input onChangeText={this.setText("category")} />
                   </Item>
                   <Text style={{ marginTop: 10, color: "red" }}>
-                    {this.state.categorymsg}
+                    {this.props.Data.categorymsg}
                   </Text>
                 </Form>
                 <Text style={{ color: "green", marginLeft: 10 }}>
-                  {this.state.categoryUploadmsg}
+                  {this.props.Data.categoryUploadmsg}
                 </Text>
                 <Button
                   block
@@ -699,12 +1109,12 @@ export default class Basic extends Component {
               </Content>
             </Container>
           </View>
-        ) : this.state.SinglePost === true ? (
+        ) : this.props.Data.SinglePost === true ? (
           <View style={styles.container}>
             <Container style={{ width: 350, marginLeft: 60 }}>
               <Content style={{ marginLeft: 20, marginRight: 20 }}>
-                {this.state.Post.length != 0 ? (
-                  this.state.Post.map((data, index) => (
+                {this.props.Data.Post.length != 0 ? (
+                  this.props.Data.Post.map((data, index) => (
                     <SinglePost
                       key={index}
                       ID={data._id}
@@ -718,7 +1128,7 @@ export default class Basic extends Component {
                       comments={data.Comments.length}
                       SetText={this.setText}
                       UploadComment={this.UploadComment}
-                      CommentMsg={this.state.Commentmsg}
+                      CommentMsg={this.props.Data.Commentmsg}
                       Comment={data.Comments}
                     />
                   ))
@@ -728,12 +1138,12 @@ export default class Basic extends Component {
               </Content>
             </Container>
           </View>
-        ) : this.state.selectedItem === "MyUpload" ? (
+        ) : this.props.Data.selectedItem === "MyUpload" ? (
           <View style={styles.container}>
             <Container style={{ width: 350, marginLeft: 60 }}>
               <Content style={{ marginLeft: 20, marginRight: 20 }}>
-                {this.state.Post.length != 0 ? (
-                  this.state.Post.map((data, index) => (
+                {this.props.Data.Post.length != 0 ? (
+                  this.props.Data.Post.map((data, index) => (
                     <ShowPost
                       key={index}
                       ID={data._id}
@@ -748,10 +1158,13 @@ export default class Basic extends Component {
                       comments={data.Comments.length}
                     />
                   ))
-                ) : (
-                  <Text style={{ color: "green", fontSize: 30 }}>
-                    Please Wait ..... loading
+                ) : this.props.Data.Error === true ? (
+                  <Text style={{ color: "red", fontSize: 20 }}>
+                    Connection TimeOut ! Check Connection with Backend Server or
+                    may Post Not available
                   </Text>
+                ) : (
+                  <ActivityIndicator size="large" color="green" />
                 )}
               </Content>
             </Container>
@@ -760,8 +1173,8 @@ export default class Basic extends Component {
           <View style={styles.container}>
             <Container style={{ width: 350, marginLeft: 60 }}>
               <Content style={{ marginLeft: 20, marginRight: 20 }}>
-                {this.state.Post.length != 0 ? (
-                  this.state.Post.map((data, index) => (
+                {this.props.Data.Post.length != 0 ? (
+                  this.props.Data.Post.map((data, index) => (
                     <ShowPost
                       key={index}
                       ID={data._id}
@@ -774,6 +1187,7 @@ export default class Basic extends Component {
                       AddLike={this.AddLike}
                       Likes={data.Like.length}
                       comments={data.Comments.length}
+                      description={data.description}
                     />
                   ))
                 ) : (
@@ -783,11 +1197,19 @@ export default class Basic extends Component {
             </Container>
           </View>
         )}
-
         <TouchableOpacity onPress={this.toggle} style={styles.button}>
-          <Image source={image} style={{ width: 32, height: 32 }} />
+          <Image
+            source={image}
+            style={{ width: 32, height: 32, marginTop: 70 }}
+          />
         </TouchableOpacity>
       </SideMenu>
     );
   }
 }
+const mapStateToProps = state => {
+  return {
+    Data: state.TimeLine
+  };
+};
+export default connect(mapStateToProps)(Basic);

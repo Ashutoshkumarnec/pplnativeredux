@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
+import { connect } from "react-redux";
+import Store from "./Store";
 import { Actions } from "react-native-router-flux";
 import {
   AppRegistry,
@@ -13,32 +15,56 @@ import {
   Image,
   ScrollView,
   Button,
-  AsyncStorage
+  AsyncStorage,
+  ActivityIndicator
 } from "react-native";
 class Inputs extends Component {
-  state = {
-    username: "",
-    password: "",
-    email: "",
-    firstname: "",
-    lastname: "",
-    usernamemsg: "",
-    passwordmsg: "",
-    emailmsg: "",
-    firstnamemsg: "",
-    lastnamemsg: "",
-    RegisterCnf: ""
-  };
+  // state = {
+  //   username: "",
+  //   password: "",
+  //   email: "",
+  //   firstname: "",
+  //   lastname: "",
+  //   usernamemsg: "",
+  //   passwordmsg: "",
+  //   emailmsg: "",
+  //   firstnamemsg: "",
+  //   lastnamemsg: "",
+  //   RegisterCnf: "",
+  //   Error: false,
+  //   Cliecked: false,
+  //   ShowRed: 0
+  // };
   HandleInput = fieldName => text => {
     if (fieldName === "email") {
       const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
       if (reg.test(text) === true) {
-        this.setState({ emailmsg: "Valid Email ", email: text });
+        // this.setState({ emailmsg: "Valid Email ", email: text });
+        Store.dispatch({
+          type: "Register_username",
+          fieldName: "emailmsg",
+          value: "Valid Email"
+        });
+        Store.dispatch({
+          type: "Register_username",
+          fieldName: "email",
+          value: text
+        });
       } else {
-        this.setState({ emailmsg: "InValid Email ", email: "" });
+        // this.setState({ emailmsg: "InValid Email ", email: "" });
+        Store.dispatch({
+          type: "Register_username",
+          fieldName: "emailmsg",
+          value: "Invalid Email"
+        });
       }
     } else {
-      this.setState({ [fieldName]: text });
+      Store.dispatch({
+        type: "Register_username",
+        value: text,
+        fieldName: fieldName
+      });
+      // this.setState({ [fieldName]: text });
     }
   };
   componentDidMount = async () => {
@@ -47,61 +73,241 @@ class Inputs extends Component {
       Actions.timeline();
     }
   };
-  SignUp = () => {
-    if (this.state.username === "") {
-      this.setState({
-        usernamemsg: "Please , Enter username",
-        RegisterCnf: ""
+  SignUp = async () => {
+    if (this.props.Data.username === "") {
+      // this.setState({
+      //   usernamemsg: "Please , Enter username",
+      //   RegisterCnf: ""
+      // });
+      Store.dispatch({
+        type: "Register_username",
+        fieldName: "usernamemsg",
+        value: "Please , Enter username"
       });
-    } else if (this.state.password === "") {
+      Store.dispatch({
+        type: "Register_username",
+        fieldName: "RegisterCnf",
+        value: ""
+      });
+    } else if (this.props.Data.password === "") {
       this.setState({
         passwordmsg: "Please , Enter Password",
         usernamemsg: "",
         RegisterCnf: ""
       });
-    } else if (this.state.email === "") {
-      this.setState({
-        emailmsg: "Please , Enter Email",
-        usernamemsg: "",
-        passwordmsg: "",
-        RegisterCnf: ""
+      Store.dispatch({
+        type: "Register_username",
+        fieldName: "passwordmsg",
+        value: "Please , Enter Password"
       });
-    } else if (this.state.firstname === "") {
-      this.setState({
-        firstnamemsg: "Please , Enter FirstName",
-        usernamemsg: "",
-        passwordmsg: "",
-        emailmsg: "",
-        RegisterCnf: ""
+      Store.dispatch({
+        type: "Register_username",
+        fieldName: "usernamemsg",
+        value: ""
       });
-      alert(this.state.email);
-    } else if (this.state.lastname === "") {
-      this.setState({
-        lastnamemsg: "Please , Enter Lastname",
-        usernamemsg: "",
-        passwordmsg: "",
-        emailmsg: "",
-        firstnamemsg: "",
-        RegisterCnf: ""
+      Store.dispatch({
+        type: "Register_username",
+        fieldName: "RegisterCnf",
+        value: ""
+      });
+    } else if (this.props.Data.email === "") {
+      // this.setState({
+      //   emailmsg: "Please , Enter Email",
+      //   usernamemsg: "",
+      //   passwordmsg: "",
+      //   RegisterCnf: ""
+      // });
+      Store.dispatch({
+        type: "Register_username",
+        fieldName: "emailmsg",
+        value: "Please , Enter Email"
+      });
+      Store.dispatch({
+        type: "Register_username",
+        fieldName: "passwordmsg",
+        value: ""
+      });
+      Store.dispatch({
+        type: "Register_username",
+        fieldName: "usernamemsg",
+        value: ""
+      });
+      Store.dispatch({
+        type: "Register_username",
+        fieldName: "RegisterCnf",
+        value: ""
+      });
+    } else if (this.props.Data.firstname === "") {
+      // this.setState({
+      //   firstnamemsg: "Please , Enter FirstName",
+      //   usernamemsg: "",
+      //   passwordmsg: "",
+      //   emailmsg: "",
+      //   RegisterCnf: ""
+      // });
+      Store.dispatch({
+        type: "Register_username",
+        fieldName: "firstnamemsg",
+        value: "Please , Enter FirstName"
+      });
+      Store.dispatch({
+        type: "Register_username",
+        fieldName: "emailmsg",
+        value: ""
+      });
+      Store.dispatch({
+        type: "Register_username",
+        fieldName: "passwordmsg",
+        value: ""
+      });
+      Store.dispatch({
+        type: "Register_username",
+        fieldName: "usernamemsg",
+        value: ""
+      });
+      Store.dispatch({
+        type: "Register_username",
+        fieldName: "RegisterCnf",
+        value: ""
+      });
+    } else if (this.props.Data.lastname === "") {
+      // this.setState({
+      //   lastnamemsg: "Please , Enter Lastname",
+      //   usernamemsg: "",
+      //   passwordmsg: "",
+      //   emailmsg: "",
+      //   firstnamemsg: "",
+      //   RegisterCnf: ""
+      // });
+      Store.dispatch({
+        type: "Register_username",
+        fieldName: "lastnamemsg",
+        value: "Please , Enter Lastname"
+      });
+      Store.dispatch({
+        type: "Register_username",
+        fieldName: "firstnamemsg",
+        value: ""
+      });
+      Store.dispatch({
+        type: "Register_username",
+        fieldName: "emailmsg",
+        value: ""
+      });
+      Store.dispatch({
+        type: "Register_username",
+        fieldName: "passwordmsg",
+        value: ""
+      });
+      Store.dispatch({
+        type: "Register_username",
+        fieldName: "usernamemsg",
+        value: ""
+      });
+      Store.dispatch({
+        type: "Register_username",
+        fieldName: "RegisterCnf",
+        value: ""
       });
     } else {
-      this.setState({ lastnamemsg: "", emailmsg: "", RegisterCnf: "" });
-      fetch("http://192.168.100.194:7187/signup", {
-        headers: {
-          Accept: "application/json",
-          "Content-type": "application/json"
-        },
-        method: "POST",
-        body: JSON.stringify(this.state)
-      })
-        .then(response => {
-          return response.json();
+      // this.setState({
+      //   lastnamemsg: "",
+      //   emailmsg: "",
+      //   RegisterCnf: "",
+      //   Cliecked: true
+      // });
+      Store.dispatch({
+        type: "Register_username",
+        fieldName: "lastnamemsg",
+        value: ""
+      });
+      Store.dispatch({
+        type: "Register_username",
+        fieldName: "emailmsg",
+        value: ""
+      });
+      Store.dispatch({
+        type: "Register_username",
+        fieldName: "RegisterCnf",
+        value: ""
+      });
+      Store.dispatch({
+        type: "Register_username",
+        fieldName: "Cliecked",
+        value: true
+      });
+      try {
+        await fetch("http://192.168.100.194:7187/signup", {
+          headers: {
+            Accept: "application/json",
+            "Content-type": "application/json"
+          },
+          method: "POST",
+          body: JSON.stringify(this.props.Data)
         })
-        .then(resp => {
-          // <Redirect to="/Login" />;
-          // this.setState({ RegisterStatus: resp.data });
-          this.setState({ RegisterCnf: resp.data });
-        });
+          .then(response => {
+            return response.json();
+          })
+          .then(resp => {
+            // <Redirect to="/Login" />;
+            // this.setState({ RegisterStatus: resp.data });
+            if (
+              resp.data === "Couldn't find your Google Account" ||
+              resp.data === "User Already Registered"
+            ) {
+              // this.setState({
+              //   RegisterCnf: resp.data,
+              //   Cliecked: false,
+              //   ShowRed: 1
+              // });
+              Store.dispatch({
+                type: "Register_username",
+                fieldName: "RegisterCnf",
+                value: resp.data
+              });
+              Store.dispatch({
+                type: "Register_username",
+                fieldName: "Cliecked",
+                value: false
+              });
+              Store.dispatch({
+                type: "Register_username",
+                fieldName: "ShowRed",
+                value: 1
+              });
+            } else {
+              // this.setState({
+              //   RegisterCnf: resp.data,
+              //   Cliecked: false,
+              //   ShowRed: 0
+              // });
+              Store.dispatch({
+                type: "Register_username",
+                fieldName: "RegisterCnf",
+                value: resp.data
+              });
+              Store.dispatch({
+                type: "Register_username",
+                fieldName: "Cliecked",
+                value: false
+              });
+              Store.dispatch({
+                type: "Register_username",
+                fieldName: "ShowRed",
+                value: 0
+              });
+            }
+          });
+      } catch (error) {
+        setTimeout(() => {
+          // this.setState({ Error: true });
+          Store.dispatch({
+            type: "Register_username",
+            fieldName: "Error",
+            value: true
+          });
+        }, 7000);
+      }
     }
   };
   Login = () => {
@@ -125,7 +331,7 @@ class Inputs extends Component {
               onChangeText={this.HandleInput("username")}
             />
             <Text style={{ marginLeft: 10, color: "red" }}>
-              {this.state.usernamemsg}
+              {this.props.Data.usernamemsg}
             </Text>
             <TextInput
               style={styles.input}
@@ -137,7 +343,7 @@ class Inputs extends Component {
               onChangeText={this.HandleInput("password")}
             />
             <Text style={{ marginLeft: 10, color: "red" }}>
-              {this.state.passwordmsg}
+              {this.props.Data.passwordmsg}
             </Text>
             <TextInput
               style={styles.input}
@@ -148,7 +354,7 @@ class Inputs extends Component {
               onChangeText={this.HandleInput("email")}
             />
             <Text style={{ marginLeft: 10, color: "red" }}>
-              {this.state.emailmsg}
+              {this.props.Data.emailmsg}
             </Text>
             <TextInput
               style={styles.input}
@@ -159,7 +365,7 @@ class Inputs extends Component {
               onChangeText={this.HandleInput("firstname")}
             />
             <Text style={{ marginLeft: 10, color: "red" }}>
-              {this.state.firstnamemsg}
+              {this.props.Data.firstnamemsg}
             </Text>
             <TextInput
               style={styles.input}
@@ -170,11 +376,24 @@ class Inputs extends Component {
               onChangeText={this.HandleInput("lastname")}
             />
             <Text style={{ marginLeft: 10, color: "red" }}>
-              {this.state.lastnamemsg}
+              {this.props.Data.lastnamemsg}
             </Text>
-            <Text style={{ marginLeft: 10, color: "red" }}>
-              {this.state.RegisterCnf}
-            </Text>
+
+            {this.props.Data.Error === true ? (
+              <Text style={{ color: "red", fontSize: 20, width: 300 }}>
+                Connection timeout, Check connection with backend Server
+              </Text>
+            ) : this.props.Data.Cliecked === true ? (
+              <ActivityIndicator size="large" color="green" />
+            ) : this.props.Data.ShowRed === 1 ? (
+              <Text style={{ marginLeft: 20, fontSize: 25, color: "red" }}>
+                {this.props.Data.RegisterCnf}
+              </Text>
+            ) : (
+              <Text style={{ marginLeft: 20, fontSize: 25, color: "green" }}>
+                {this.props.Data.RegisterCnf}
+              </Text>
+            )}
             <View
               style={{
                 display: "flex",
@@ -224,7 +443,12 @@ class Inputs extends Component {
     );
   }
 }
-export default Inputs;
+const mapStateToProps = state => {
+  return {
+    Data: state.Register
+  };
+};
+export default connect(mapStateToProps)(Inputs);
 
 const styles = StyleSheet.create({
   container: {

@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import Header from "./Header";
+import { connect } from "react-redux";
+import Store from "./Store";
 import Footer from "./Footer";
 import { Actions } from "react-native-router-flux";
 import {
@@ -13,70 +15,188 @@ import {
   Image,
   ScrollView,
   AsyncStorage,
-  Button
+  Button,
+  ActivityIndicator,
+  Modal
 } from "react-native";
 // import { Header } from "react-native-elements";
 class Login extends Component {
-  state = {
-    password: "",
-    email: "",
-    passwordmsg: "",
-    emailmsg: "",
-    LoginCnf: ""
-  };
+  // state = {
+  //   password: "",
+  //   email: "",
+  //   passwordmsg: "",
+  //   emailmsg: "",
+  //   LoginCnf: "",
+  //   Error: false,
+  //   Cliecked: false
+  // };
   HandleInput = fieldName => text => {
     if (fieldName === "email") {
       const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
       if (reg.test(text) === true) {
-        this.setState({ emailmsg: "Valid Email ", email: text });
+        // this.setState({ emailmsg: "Valid Email ", email: text });
+        Store.dispatch({
+          type: "Login_username",
+          fieldName: "emailmsg",
+          value: "Valid Email"
+        });
+        Store.dispatch({
+          type: "Login_username",
+          fieldName: "email",
+          value: text
+        });
       } else {
-        this.setState({ emailmsg: "InValid Email ", email: "" });
+        // this.setState({ emailmsg: "InValid Email ", email: "" });
+        Store.dispatch({
+          type: "Login_username",
+          fieldName: "emailmsg",
+          value: "InValid Email"
+        });
+        Store.dispatch({
+          type: "Login_username",
+          fieldName: "email",
+          value: ""
+        });
       }
     } else {
-      this.setState({ [fieldName]: text });
+      // this.setState({ [fieldName]: text });
+      Store.dispatch({
+        type: "Login_username",
+        fieldName: fieldName,
+        value: text
+      });
     }
   };
   Login = async () => {
-    if (this.state.email === "") {
-      this.setState({
-        emailmsg: "Please , Enter Email",
-        LoginCnf: ""
+    if (this.props.Data.email === "") {
+      // this.setState({
+      //   emailmsg: "Please , Enter Email",
+      //   LoginCnf: ""
+      // });
+      Store.dispatch({
+        type: "Login_username",
+        fieldName: "emailmsg",
+        value: "Please , Enter Email"
       });
-    } else if (this.state.password === "") {
-      this.setState({
-        passwordmsg: "Please , Enter Password",
-        emailmsg: "",
-        LoginCnf: ""
+      Store.dispatch({
+        type: "Login_username",
+        fieldName: "LoginCnf",
+        value: ""
+      });
+    } else if (this.props.Data.password === "") {
+      // this.setState({
+      //   passwordmsg: "Please , Enter Password",
+      //   emailmsg: "",
+      //   LoginCnf: ""
+      // });
+      Store.dispatch({
+        type: "Login_username",
+        fieldName: "passwordmsg",
+        value: "Please , Enter Password"
+      });
+      Store.dispatch({
+        type: "Login_username",
+        fieldName: "emailmsg",
+        value: ""
+      });
+      Store.dispatch({
+        type: "Login_username",
+        fieldName: "LoginCnf",
+        value: ""
       });
     } else {
-      this.setState({ passwordmsg: "", emailmsg: "" });
-      await fetch("http://192.168.100.194:7187/login", {
-        headers: {
-          Accept: "application/json",
-          "Content-type": "application/json"
-        },
-        method: "POST",
-        body: JSON.stringify(this.state)
-      })
-        .then(response => {
-          return response.json();
+      // this.setState({ passwordmsg: "", emailmsg: "", Cliecked: true });
+      Store.dispatch({
+        type: "Login_username",
+        fieldName: "passwordmsg",
+        value: ""
+      });
+      Store.dispatch({
+        type: "Login_username",
+        fieldName: "emailmsg",
+        value: ""
+      });
+      Store.dispatch({
+        type: "Login_username",
+        fieldName: "Cliecked",
+        value: true
+      });
+      try {
+        await fetch("http://192.168.100.194:7187/login", {
+          headers: {
+            Accept: "application/json",
+            "Content-type": "application/json"
+          },
+          method: "POST",
+          body: JSON.stringify(this.props.Data)
         })
-        .then(resp => {
-          if (resp.data === "Incorrect Password or Email not Verified") {
-            this.setState({ LoginCnf: resp.data });
-          } else if (resp.data === "User Not Registered") {
-            this.setState({ LoginCnf: resp.data });
-          } else {
-            this.storeData(resp.data);
-            Actions.pop({ key: Actions.timeline() });
-            Actions.refresh({ key: Actions.timeline() });
-          }
-        });
+          .then(response => {
+            return response.json();
+          })
+          .then(resp => {
+            if (resp.data === "Incorrect Password or Email not Verified") {
+              // this.setState({ LoginCnf: resp.data, Cliecked: false });
+              Store.dispatch({
+                type: "Login_username",
+                fieldName: "LoginCnf",
+                value: resp.data
+              });
+              Store.dispatch({
+                type: "Login_username",
+                fieldName: "Cliecked",
+                value: false
+              });
+            } else if (resp.data === "User Not Registered") {
+              // this.setState({ LoginCnf: resp.data, Cliecked: false });
+              Store.dispatch({
+                type: "Login_username",
+                fieldName: "LoginCnf",
+                value: resp.data
+              });
+              Store.dispatch({
+                type: "Login_username",
+                fieldName: "Cliecked",
+                value: false
+              });
+            } else {
+              this.storeData(resp.data);
+              Actions.pop({ key: Actions.timeline() });
+              Actions.refresh({ key: Actions.timeline() });
+              Store.dispatch({
+                type: "Login_username",
+                fieldName: "Cliecked",
+                value: false
+              });
+            }
+          });
+      } catch (error) {
+        setTimeout(() => {
+          // this.setState({ Error: true });
+          Store.dispatch({
+            type: "Login_username",
+            fieldName: "Error",
+            value: true
+          });
+        }, 7000);
+      }
     }
+  };
+  Toggle = () => {
+    // this.setState({ Error: false, Cliecked: false });
+    Store.dispatch({
+      type: "Login_username",
+      fieldName: "Error",
+      value: false
+    });
+    Store.dispatch({
+      type: "Login_username",
+      fieldName: "Cliecked",
+      value: false
+    });
   };
   storeData = async firstname => {
     try {
-      await AsyncStorage.setItem("email", this.state.email);
+      await AsyncStorage.setItem("email", this.props.Data.email);
       await AsyncStorage.setItem("Username", firstname);
     } catch (error) {
       alert(error);
@@ -103,12 +223,14 @@ class Login extends Component {
               style={styles.input}
               underlineColorAndroid="transparent"
               placeholder="Email"
+              blurOnSubmit={false}
               placeholderTextColor="black"
               autoCapitalize="none"
+              returnKeyType={"next"}
               onChangeText={this.HandleInput("email")}
             />
             <Text style={{ marginLeft: 10, color: "red" }}>
-              {this.state.emailmsg}
+              {this.props.Data.emailmsg}
             </Text>
             <TextInput
               style={styles.input}
@@ -120,11 +242,68 @@ class Login extends Component {
               onChangeText={this.HandleInput("password")}
             />
             <Text style={{ marginLeft: 10, color: "red" }}>
-              {this.state.passwordmsg}
+              {this.props.Data.passwordmsg}
             </Text>
-            <Text style={{ marginLeft: 10, color: "red" }}>
-              {this.state.LoginCnf}
-            </Text>
+            {this.props.Data.Error === true ? (
+              <View
+                style={{
+                  display: "flex",
+                  position: "absolute",
+                  width: 310,
+                  height: 200,
+                  backgroundColor: "white",
+                  opacity: 0.9,
+                  margin: "auto",
+
+                  zIndex: 1,
+                  marginTop: 60,
+                  marginLeft: 40,
+                  borderRadius: 10,
+                  borderColor: "orange",
+                  borderWidth: 1
+                }}
+                onPress={this.Close}
+              >
+                <Text
+                  style={{ fontSize: 25, marginLeft: 270 }}
+                  onPress={this.Toggle}
+                >
+                  ❌
+                </Text>
+                <Text style={{ color: "red", fontSize: 20, width: 300 }}>
+                  Connection timeout, Check connection with backend Server
+                </Text>
+              </View>
+            ) : this.props.Data.Cliecked === true ? (
+              <View
+                style={{
+                  display: "flex",
+                  position: "absolute",
+                  width: 310,
+                  height: 200,
+                  backgroundColor: "white",
+                  opacity: 0.9,
+                  margin: "auto",
+                  justifyContent: "center",
+                  zIndex: 1,
+                  marginTop: 60,
+                  marginLeft: 40,
+                  borderRadius: 10,
+                  borderColor: "orange",
+                  borderWidth: 1
+                }}
+                onPress={this.Close}
+              >
+                <Text style={{ color: "green", fontSize: 20 }}>
+                  Processing your request , Please wait ....
+                </Text>
+                <ActivityIndicator size="large" color="green" />
+              </View>
+            ) : (
+              <Text style={{ marginLeft: 10, color: "red" }}>
+                {this.props.Data.LoginCnf}
+              </Text>
+            )}
             <View
               style={{
                 display: "flex",
@@ -153,6 +332,7 @@ class Login extends Component {
                     Login
                   </Text>
                   </TouchableOpacity>*/}
+
                 <Button full rounded dark onPress={this.Login} title="Login" />
               </View>
               <View>
@@ -161,6 +341,7 @@ class Login extends Component {
                   <Text style={{ color: "red" }}>"Register"</Text>
                 </Text>
               </View>
+
               <View
                 style={{
                   marginLeft: 12,
@@ -230,7 +411,12 @@ class Login extends Component {
     );
   }
 }
-export default Login;
+const mapStateToProps = state => {
+  return {
+    Data: state.Login
+  };
+};
+export default connect(mapStateToProps)(Login);
 
 const styles = StyleSheet.create({
   container: {

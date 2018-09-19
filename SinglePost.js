@@ -60,8 +60,7 @@ const styles = StyleSheet.create({
     marginBottom: 5
   },
   avatarContainer1: {
-    borderColor: "#9B9B9B",
-    borderWidth: 1 / PixelRatio.get()
+    borderColor: "#9B9B9B"
   },
   avatarContainer4: {
     marginBottom: 20,
@@ -85,15 +84,12 @@ const styles = StyleSheet.create({
     height: 230
   },
   avatar2: {
-    borderRadius: 5,
     width: 400,
-    height: 330,
-    backgroundColor: "#98AFC7"
+    height: 420
   },
   avatar1: {
-    borderRadius: 5,
     width: 300,
-    height: 200
+    height: 280
   }
 });
 class ShowPost extends Component {
@@ -140,11 +136,19 @@ class ShowPost extends Component {
                 width: 60,
                 justifyContent: "center",
                 alignItems: "center",
-                marginLeft: 10
+                marginLeft: 10,
+                backgroundColor: "white"
               }}
             >
               <Text>
-                Like-
+                <Text
+                  style={{
+                    fontSize: 50,
+                    opacity: 0.5
+                  }}
+                >
+                  👍
+                </Text>
                 {this.props.Likes}
               </Text>
             </Button>
@@ -159,7 +163,14 @@ class ShowPost extends Component {
                 width: 100
               }}
             >
-              comment-
+              <Text
+                style={{
+                  fontSize: 40,
+                  opacity: 0.5
+                }}
+              >
+                💬
+              </Text>
               {this.props.comments}
             </Text>
           </View>

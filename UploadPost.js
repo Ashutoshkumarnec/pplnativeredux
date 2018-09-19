@@ -84,7 +84,7 @@ class UploadPost extends Component {
     return (
       <View>
         <Form>
-          <Item floatingLabel>
+          <Item floatingLabel style={{ marginRight: 20 }}>
             <Label>Title</Label>
             <Input onChangeText={this.props.SetText("title")} />
           </Item>
@@ -94,14 +94,14 @@ class UploadPost extends Component {
           <Dropdown
             label="Category"
             data={this.props.Data}
-            style={{ width: 350, marginLeft: 70 }}
+            style={{ width: 340, marginLeft: 70 }}
             onChangeText={this.props.SetText("category")}
             ref="category"
           />
           <Text style={{ color: "red", marginLeft: 10 }}>
             {this.props.CategoryMsg}
           </Text>
-          <Item floatingLabel>
+          <Item floatingLabel style={{ marginRight: 20 }}>
             <Label>Description</Label>
             <Input
               multiline={true}
@@ -135,7 +135,12 @@ class UploadPost extends Component {
         <Text style={{ color: "green", marginLeft: 10 }}>
           {this.props.PostUploadMsg}
         </Text>
-        <Button block success onPress={this.props.uploadPost}>
+        <Button
+          block
+          success
+          onPress={this.props.uploadPost}
+          style={{ marginRight: 20 }}
+        >
           <Text>Upload Post</Text>
         </Button>
       </View>
